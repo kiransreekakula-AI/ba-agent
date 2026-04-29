@@ -39,7 +39,9 @@ def _get_secret(key):
 
 ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY")
 TAVILY_API_KEY    = _get_secret("TAVILY_API_KEY")
-
+# TEMPORARY DEBUG — remove after fixing
+import streamlit as st
+st.write("Key starts with:", ANTHROPIC_API_KEY[:10] if ANTHROPIC_API_KEY else "EMPTY")
 # ─────────────────────────────────────────
 # SETTINGS
 # ─────────────────────────────────────────
@@ -268,7 +270,8 @@ def get_answer(question, doc_chunks, web_chunks):
     history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[-10:]]
     history.append({"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer with citations."})
 
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+ 
+    client = anthropic.Anthropic(api_key="sk-ant-your-brand-new-key-pasted-directly")
     resp   = client.messages.create(
         model   = "claude-sonnet-4-5",
         max_tokens = 1500,
