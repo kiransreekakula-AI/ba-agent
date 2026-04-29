@@ -37,8 +37,8 @@ def _get_secret(key):
     except Exception:
         return ""
 
-ANTHROPIC_API_KEY = _get_secret("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")
-TAVILY_API_KEY    = _get_secret("ttvly-dev-26GRqm-BfpPDkem2hBkScXkJBGN5BYiJfxI1m1L0PPVWdLs0N")
+ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY")
+TAVILY_API_KEY    = _get_secret("TAVILY_API_KEY")
 
 # ─────────────────────────────────────────
 # SETTINGS
@@ -269,7 +269,7 @@ def get_answer(question, doc_chunks, web_chunks):
     history.append({"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer with citations."})
 
  
-    client = anthropic.Anthropic(api_key="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")
+    client = anthropic.Anthropic(api_key="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")
     resp   = client.messages.create(
         model   = "claude-sonnet-4-5",
         max_tokens = 1500,
