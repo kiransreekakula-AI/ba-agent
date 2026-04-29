@@ -1,0 +1,11 @@
+anthropic
+langchain
+langchain-anthropic
+langchain-community
+chromadb
+streamlit
+pymupdf
+python-docx
+python-pptx
+tavily-python
+python-dotenv
