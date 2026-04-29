@@ -25,16 +25,12 @@ import tempfile
 # Locally:        reads from your .env file
 # Streamlit Cloud: reads from Settings → Secrets panel
 # ─────────────────────────────────────────
-load_dotenv()  # loads .env when running locally (ignored on Streamlit Cloud)
+python
+load_dotenv()
 
-# Safely read Streamlit secrets — works locally AND on Streamlit Cloud
-try:
-    if "ANTHROPIC_API_KEY" in st.secrets:
-        os.environ["ANTHROPIC_API_KEY"] = st.secrets["ANTHROPIC_API_KEY"]
-    if "TAVILY_API_KEY" in st.secrets:
-        os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
-except Exception:
-    pass  # running locally without secrets.toml — .env handles it
+# Read API keys — works on Render AND locally
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+TAVILY_API_KEY    = os.environ.get("TAVILY_API_KEY", "")
 
 # ─────────────────────────────────────────
 # SETTINGS
@@ -265,7 +261,7 @@ def get_answer(question, doc_chunks, web_chunks):
     history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[-10:]]
     history.append({"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer with citations."})
 
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = anthropic.Anthropic(api_key= ANTHROPIC_API_KEY
     resp   = client.messages.create(
         model   = "claude-sonnet-4-6",
         max_tokens = 1500,
