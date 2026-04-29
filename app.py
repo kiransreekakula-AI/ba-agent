@@ -37,7 +37,7 @@ def _get_secret(key):
     except Exception:
         return ""
 
-ANTHROPIC_API_KEY = _get_secret("sk-ant-api03-0wuAy2mDGGnS0SAKmmmgOQngOxHLOEEsAqRWuP_KNM5qzYfQS4uxN24xDuFuViH1ZIwgSj96pmmXBHJs0oPOYQ-6NUjRwAA")
+ANTHROPIC_API_KEY = _get_secret("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")
 TAVILY_API_KEY    = _get_secret("ttvly-dev-26GRqm-BfpPDkem2hBkScXkJBGN5BYiJfxI1m1L0PPVWdLs0N")
 
 # ─────────────────────────────────────────
