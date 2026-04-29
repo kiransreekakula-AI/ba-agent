@@ -269,7 +269,7 @@ def get_answer(question, doc_chunks, web_chunks):
     history.append({"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer with citations."})
 
  
-    client = anthropic.Anthropic(api_key="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")
+    client = anthropic.Anthropic(api_key="ANTHROPIC_API_KEY")
     resp   = client.messages.create(
         model   = "claude-sonnet-4-5",
         max_tokens = 1500,
