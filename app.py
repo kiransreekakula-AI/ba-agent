@@ -11,25 +11,34 @@ Run with:
 
 import os
 import streamlit as st
-from dotenv import load_dotenv
 import chromadb
 from chromadb.utils import embedding_functions
 import anthropic
-import fitz                      # PyMuPDF — reads PDFs
-from docx import Document        # reads Word files
-from pptx import Presentation    # reads PowerPoint files
+import fitz
+from docx import Document
+from pptx import Presentation
 import tempfile
 
 # ─────────────────────────────────────────
-# SECRETS — works locally AND on Streamlit Cloud
-# Locally:        reads from your .env file
-# Streamlit Cloud: reads from Settings → Secrets panel
+# SECRETS — works on Render, Streamlit Cloud, and locally
 # ─────────────────────────────────────────
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
 
-# Read API keys — works on Render AND locally
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-TAVILY_API_KEY    = os.environ.get("TAVILY_API_KEY", "")
+def _get_secret(key):
+    val = os.environ.get(key, "")
+    if val:
+        return val
+    try:
+        return st.secrets.get(key, "")
+    except Exception:
+        return ""
+
+ANTHROPIC_API_KEY = _get_secret("ANTHROPIC_API_KEY")
+TAVILY_API_KEY    = _get_secret("TAVILY_API_KEY")
 
 # ─────────────────────────────────────────
 # SETTINGS
@@ -236,11 +245,10 @@ def search_documents(collection, question):
     return [{"text": results["documents"][0][i], "source": results["metadatas"][0][i].get("source",""), "location": results["metadatas"][0][i].get("location","")} for i in range(len(results["documents"][0]))]
 
 def search_web(question):
-    key = os.getenv("TAVILY_API_KEY")
-    if not key: return []
+    if not TAVILY_API_KEY: return []
     try:
         from tavily import TavilyClient
-        results = TavilyClient(api_key=key).search(query=question, max_results=3)
+        results = TavilyClient(api_key=TAVILY_API_KEY).search(query=question, max_results=3)
         return [{"text": r.get("content",""), "source": r.get("url","Web"), "location": "Web"} for r in results.get("results",[])]
     except:
         return []
@@ -260,9 +268,9 @@ def get_answer(question, doc_chunks, web_chunks):
     history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[-10:]]
     history.append({"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer with citations."})
 
-    client = anthropic.Anthropic(api_key= ANTHROPIC_API_KEY)
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     resp   = client.messages.create(
-        model   = "claude-sonnet-4-6",
+        model   = "claude-sonnet-4-5",
         max_tokens = 1500,
         system  = """You are an expert Business Analyst assistant. Help BAs understand their project documents.
 RULES:
@@ -318,7 +326,7 @@ with st.sidebar:
     # Web search toggle
     use_web = st.toggle(
         "🌐 Web Search",
-        value = bool(os.getenv("TAVILY_API_KEY")),
+        value = bool(TAVILY_API_KEY),
         help  = "Search the web for additional context (requires Tavily API key)"
     )
 
