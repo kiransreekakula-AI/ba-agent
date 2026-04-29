@@ -25,7 +25,6 @@ import tempfile
 # Locally:        reads from your .env file
 # Streamlit Cloud: reads from Settings → Secrets panel
 # ─────────────────────────────────────────
-python
 load_dotenv()
 
 # Read API keys — works on Render AND locally
